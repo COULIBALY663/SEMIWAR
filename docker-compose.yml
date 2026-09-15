@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: appel_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: appel
+      POSTGRES_PASSWORD: appel
+      POSTGRES_DB: appel_semiwar
+    ports:
+      - "5432:5432"
+    volumes:
+      - appel_pgdata:/var/lib/postgresql/data
+
+volumes:
+  appel_pgdata:
