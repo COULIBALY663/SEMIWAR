@@ -1,48 +1,52 @@
 :root {
-  --color-bg: #f3f5fb;
+  --color-bg: #f4f8f4;
   --color-surface: #ffffff;
-  --color-surface-alt: #f8f9fd;
-  --color-border: #e3e6ef;
-  --color-text: #1a1f36;
-  --color-text-muted: #6b7280;
-  --color-primary: #4353ff;
-  --color-primary-dark: #2f3fd8;
-  --color-primary-light: #eef0ff;
+  --color-surface-alt: #f6faf6;
+  --color-border: #e0e8e1;
+  --color-text: #17241a;
+  --color-text-muted: #647267;
+  --color-primary: #1f6b3a;
+  --color-primary-dark: #14502a;
+  --color-primary-light: #e6f4ea;
   --color-danger: #dc2626;
   --color-danger-light: #fee2e2;
   --color-success: #16a34a;
   --color-success-light: #dcfce7;
-  --color-warning: #d97706;
-  --color-warning-light: #fef3c7;
+  --color-warning: #c8860d;
+  --color-warning-light: #fdf0d5;
+  --color-accent: #d9a441;
+  --color-accent-light: #fbf1dd;
 
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 18px;
 
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 6px 16px rgba(23, 29, 55, 0.08);
-  --shadow-lg: 0 20px 45px rgba(23, 29, 55, 0.16);
+  --shadow-sm: 0 1px 2px rgba(15, 42, 23, 0.05);
+  --shadow-md: 0 6px 16px rgba(15, 42, 23, 0.08);
+  --shadow-lg: 0 20px 45px rgba(15, 42, 23, 0.16);
 
   font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
   color-scheme: light;
 }
 
 :root[data-theme='dark'] {
-  --color-bg: #0f1117;
-  --color-surface: #171a24;
-  --color-surface-alt: #1e212c;
-  --color-border: #2b2f3d;
-  --color-text: #e9eaf3;
-  --color-text-muted: #949aad;
-  --color-primary: #7c8cff;
-  --color-primary-dark: #97a4ff;
-  --color-primary-light: #242a4a;
+  --color-bg: #0f1512;
+  --color-surface: #161e19;
+  --color-surface-alt: #1c2721;
+  --color-border: #29352d;
+  --color-text: #e8f0ea;
+  --color-text-muted: #9caea2;
+  --color-primary: #4caf6e;
+  --color-primary-dark: #6fcf97;
+  --color-primary-light: #1c3a27;
   --color-danger: #f87171;
   --color-danger-light: #3a1e22;
   --color-success: #4ade80;
   --color-success-light: #163526;
-  --color-warning: #fbbf24;
-  --color-warning-light: #3a2c10;
+  --color-warning: #e0b04a;
+  --color-warning-light: #3a2f10;
+  --color-accent: #e0b04a;
+  --color-accent-light: #3a2f10;
   color-scheme: dark;
 }
 
@@ -113,13 +117,12 @@ h3 {
   white-space: nowrap;
 }
 
-.app-header .brand::before {
-  content: '';
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
-  background: linear-gradient(135deg, var(--color-primary), #7c8cff);
-  display: inline-block;
+.app-header .brand-logo {
+  height: 28px;
+  width: 28px;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+  background: var(--color-surface);
 }
 
 .app-header nav {
@@ -171,13 +174,13 @@ h3 {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary), #7c8cff);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
   position: relative;
 }
 
 .theme-toggle-knob.dark {
-  background: #10121b;
-  box-shadow: inset -3px -3px 0 0 #7c8cff;
+  background: #10151b;
+  box-shadow: inset -3px -3px 0 0 var(--color-accent);
 }
 
 .app-main {
@@ -444,7 +447,7 @@ a.stat-tile:hover {
   justify-content: center;
   padding: 3rem;
   color: white;
-  background: linear-gradient(150deg, #3546e0 0%, #4353ff 45%, #7c8cff 100%);
+  background: linear-gradient(150deg, #0f3d22 0%, #1f6b3a 45%, #4f9d63 100%);
   position: relative;
   overflow: hidden;
 }
@@ -482,12 +485,6 @@ a.stat-tile:hover {
   z-index: 1;
 }
 
-.login-brand-panel .login-brand-mark .dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 4px;
-  background: white;
-}
 
 .login-brand-panel h1 {
   font-size: 2rem;
@@ -607,7 +604,15 @@ a.stat-tile:hover {
 }
 
 .login-brand-panel-admin {
-  background: linear-gradient(150deg, #171a2e 0%, #2b2f5c 55%, #4353ff 100%);
+  background: linear-gradient(150deg, #0a1f14 0%, #163524 55%, #1f6b3a 100%);
+}
+
+.login-brand-mark .logo-img {
+  height: 28px;
+  width: 28px;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+  background: white;
 }
 
 @media (max-width: 860px) {

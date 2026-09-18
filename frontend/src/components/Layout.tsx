@@ -15,7 +15,10 @@ export function Layout() {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <span className="brand">Appel SEMIWAR</span>
+        <span className="brand">
+          <img src="/logo.jpg" alt="EPT SEWIMAR" className="brand-logo" />
+          Appel SEMIWAR
+        </span>
         <nav>
           {user?.role === 'ADMIN' && (
             <>
