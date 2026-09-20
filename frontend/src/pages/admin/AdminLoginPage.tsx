@@ -31,7 +31,7 @@ export function AdminLoginPage() {
       <div className="login-brand-panel login-brand-panel-admin">
         <div className="login-brand-mark">
           <img src="/logo.jpg" alt="EPT SEWIMAR" className="logo-img" />
-          Appel SEMIWAR — Administration
+          Appel SEWIMAR — Administration
         </div>
         <h1>Pilotez les classes, élèves et signalements de votre établissement</h1>
         <p>

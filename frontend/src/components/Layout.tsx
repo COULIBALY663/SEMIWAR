@@ -17,7 +17,7 @@ export function Layout() {
       <header className="app-header">
         <span className="brand">
           <img src="/logo.jpg" alt="EPT SEWIMAR" className="brand-logo" />
-          Appel SEMIWAR
+          Appel SEWIMAR
         </span>
         <nav>
           {user?.role === 'ADMIN' && (

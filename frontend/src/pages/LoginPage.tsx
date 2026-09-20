@@ -70,7 +70,7 @@ export function LoginPage() {
       <div className="login-brand-panel">
         <div className="login-brand-mark">
           <img src="/logo.jpg" alt="EPT SEWIMAR" className="logo-img" />
-          Appel SEMIWAR
+          Appel SEWIMAR
         </div>
         <h1>Le suivi de présence, simplifié pour toute l'école</h1>
         <p>

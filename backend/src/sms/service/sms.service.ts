@@ -21,7 +21,7 @@ export class SmsService {
     parent: Parent,
     date: string,
   ): Promise<void> {
-    const message = `SEMIWAR: Votre enfant ${eleve.prenom} ${eleve.nom} a été noté(e) ABSENT le ${date}. Contactez l'administration pour plus d'informations.`;
+    const message = `SEWIMAR: Votre enfant ${eleve.prenom} ${eleve.nom} a été noté(e) ABSENT le ${date}. Contactez l'administration pour plus d'informations.`;
     try {
       const result = await this.smsProvider.send(parent.telephone, message);
       await this.smsLogRepository.create({
