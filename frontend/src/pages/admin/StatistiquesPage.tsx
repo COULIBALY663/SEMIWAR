@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { classeApi, eleveApi, statistiqueApi, trimestreApi } from '../../api/api';
 import type { Classe, Eleve, StatistiqueEleve, Trimestre } from '../../types';
+import { messageErreur } from '../../api/erreur';
 
 export function StatistiquesPage() {
   const [classes, setClasses] = useState<Classe[]>([]);
@@ -9,6 +10,7 @@ export function StatistiquesPage() {
   const [trimestreId, setTrimestreId] = useState('');
   const [eleves, setEleves] = useState<Eleve[]>([]);
   const [stats, setStats] = useState<StatistiqueEleve[]>([]);
+  const [erreur, setErreur] = useState<string | null>(null);
 
   useEffect(() => {
     classeApi.findAll().then(setClasses);
@@ -17,8 +19,19 @@ export function StatistiquesPage() {
 
   useEffect(() => {
     if (!classeId) return;
-    eleveApi.findAll(classeId).then(setEleves);
-    statistiqueApi.pourClasse(classeId, trimestreId || undefined).then(setStats);
+    setErreur(null);
+    Promise.all([
+      eleveApi.findAll(classeId),
+      statistiqueApi.pourClasse(classeId, trimestreId || undefined),
+    ])
+      .then(([elevesData, statsData]) => {
+        setEleves(elevesData);
+        setStats(statsData);
+      })
+      .catch((e) => {
+        setStats([]);
+        setErreur(messageErreur(e));
+      });
   }, [classeId, trimestreId]);
 
   const eleveNom = (eleveId: string) => {
@@ -54,7 +67,9 @@ export function StatistiquesPage() {
         </div>
       </div>
 
-      {classeId && (
+      {erreur && <p className="error-message">{erreur}</p>}
+
+      {classeId && !erreur && (
         <div className="card">
           <table>
             <thead>

@@ -1,5 +1,16 @@
 services:
   - type: web
+    name: appel-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: web
     name: appel-backend
     env: node
     plan: free

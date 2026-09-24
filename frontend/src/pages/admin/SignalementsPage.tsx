@@ -2,11 +2,19 @@ import { useEffect, useState } from 'react';
 import { signalementApi } from '../../api/api';
 import type { Signalement } from '../../types';
 import { StatutBadge } from '../../components/StatutBadge';
+import { messageErreur } from '../../api/erreur';
 
 export function SignalementsPage() {
   const [signalements, setSignalements] = useState<Signalement[]>([]);
+  const [erreur, setErreur] = useState<string | null>(null);
 
-  const charger = () => signalementApi.findAll().then(setSignalements);
+  const charger = () => {
+    setErreur(null);
+    signalementApi
+      .findAll()
+      .then(setSignalements)
+      .catch((e) => setErreur(messageErreur(e)));
+  };
 
   useEffect(() => {
     charger();
@@ -20,6 +28,7 @@ export function SignalementsPage() {
   return (
     <div>
       <h1>Signalements d'absences répétées</h1>
+      {erreur && <p className="error-message">{erreur}</p>}
       <div className="card">
         <table>
           <thead>
