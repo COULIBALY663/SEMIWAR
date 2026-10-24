@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { ThemeToggle } from '../theme/ThemeToggle';
+import { AdminLayout } from './AdminLayout';
 
 export function Layout() {
   const { user, logout, isResponsableDeClasse } = useAuth();
@@ -12,6 +13,8 @@ export function Layout() {
     navigate(etaitAdmin ? '/administrateur' : '/login');
   };
 
+  if (user?.role === 'ADMIN') return <AdminLayout />;
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -20,19 +23,6 @@ export function Layout() {
           Appel SEWIMAR
         </span>
         <nav>
-          {user?.role === 'ADMIN' && (
-            <>
-              <NavLink to="/admin">Dashboard</NavLink>
-              <NavLink to="/admin/classes">Classes</NavLink>
-              <NavLink to="/admin/eleves">Élèves</NavLink>
-              <NavLink to="/admin/parents">Parents</NavLink>
-              <NavLink to="/admin/matieres">Matières</NavLink>
-              <NavLink to="/admin/trimestres">Trimestres</NavLink>
-              <NavLink to="/admin/statistiques">Statistiques</NavLink>
-              <NavLink to="/admin/signalements">Signalements</NavLink>
-              <NavLink to="/admin/sms-logs">SMS</NavLink>
-            </>
-          )}
           {user?.role === 'ELEVE' && (
             <>
               <NavLink to="/eleve">Mon assiduité</NavLink>

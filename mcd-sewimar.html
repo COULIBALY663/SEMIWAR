@@ -1,0 +1,445 @@
+<title>MCD SEWIMAR</title>
+<style>
+  :root {
+    --bg: #f1f2f5;
+    --surface: #ffffff;
+    --surface-2: #e7e9ee;
+    --border: #d4d7de;
+    --ink: #1a1d24;
+    --ink-soft: #666b76;
+    --accent: #3454d6;
+    --accent-ink: #22378f;
+    --accent-soft: #e7ecfc;
+    --font-sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1115;
+      --surface: #171a20;
+      --surface-2: #1e2229;
+      --border: #2c313a;
+      --ink: #e7e9ee;
+      --ink-soft: #9298a4;
+      --accent: #8299ff;
+      --accent-ink: #c3ceff;
+      --accent-soft: rgba(130,153,255,0.14);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115;
+    --surface: #171a20;
+    --surface-2: #1e2229;
+    --border: #2c313a;
+    --ink: #e7e9ee;
+    --ink-soft: #9298a4;
+    --accent: #8299ff;
+    --accent-ink: #c3ceff;
+    --accent-soft: rgba(130,153,255,0.14);
+  }
+
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); }
+
+  .page { max-width: 980px; margin: 0 auto; padding-block: 40px 64px; display: flex; flex-direction: column; gap: 28px; }
+  .page > * { padding-inline: 20px; }
+
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); margin: 0 0 8px; }
+  h1 { font-size: clamp(26px, 4vw, 34px); font-weight: 700; margin: 0 0 10px; letter-spacing: -0.01em; text-wrap: balance; }
+  .lede { font-size: 15px; line-height: 1.65; color: var(--ink-soft); max-width: 68ch; margin: 0; }
+  .lede b { color: var(--ink); font-weight: 600; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 28px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-soft); }
+  .legend-tag { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--accent-ink); background: var(--accent-soft); border-radius: 6px; padding: 2px 7px; }
+  .legend-sep { width: 1px; align-self: stretch; background: var(--border); }
+
+  .diagram-shell { border: 1px solid var(--border); border-radius: 16px; background: var(--surface); overflow: hidden; }
+  .diagram-scroll { overflow-x: auto; padding: 24px; }
+  .diagram-scroll svg { display: block; width: 1700px; max-width: none; height: auto; color: var(--ink); }
+  figure { margin: 0; }
+  figcaption { padding: 4px 24px 20px; font-size: 12.5px; color: var(--ink-soft); }
+
+  .zones { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  .zone { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .zone h3 { margin: 0 0 6px; font-size: 13px; font-weight: 600; }
+  .zone p { margin: 0; font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); }
+  .zone .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 7px; background: var(--ink-soft); }
+  .zone.accent .dot { background: var(--accent); }
+  .zone.accent h3 { color: var(--accent-ink); }
+
+  .notes { border-top: 1px solid var(--border); padding-top: 22px; }
+  .notes h2 { font-size: 15px; font-weight: 600; margin: 0 0 10px; }
+  .notes ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 7px; }
+  .notes li { font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); }
+  .notes code { font-family: var(--font-mono); font-size: 12.5px; background: var(--surface-2); border-radius: 4px; padding: 1px 5px; color: var(--ink); }
+
+  /* SVG styling */
+  .ebox { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; }
+  .ebox.accentbox { stroke: var(--accent); stroke-width: 2; }
+  .ehead { font-family: var(--font-sans); font-size: 14px; font-weight: 700; letter-spacing: 0.02em; fill: var(--ink); }
+  .ehead.accenthead { fill: var(--accent-ink); }
+  .esep { stroke: var(--border); stroke-width: 1; }
+  .erow { font-family: var(--font-mono); font-size: 11.5px; fill: var(--ink-soft); }
+  .erow.pk { fill: var(--ink); font-weight: 500; text-decoration: underline; text-decoration-color: var(--ink-soft); }
+  .pkdot { fill: var(--accent); }
+
+  .rel { fill: none; stroke: var(--ink-soft); stroke-width: 1.5; }
+  .rel.core { stroke: var(--accent); stroke-width: 2; }
+  .relverb { font-family: var(--font-sans); font-size: 12px; font-weight: 600; fill: var(--ink); }
+  .relverb.core { fill: var(--accent-ink); }
+  .relpill { fill: var(--surface); stroke: var(--border); stroke-width: 1; }
+  .relpill.core { stroke: var(--accent); }
+  .card { font-family: var(--font-mono); font-size: 10.5px; fill: var(--ink-soft); }
+</style>
+
+<div class="page">
+  <header>
+    <p class="eyebrow">Base de données SEWIMAR</p>
+    <h1>Modèle conceptuel de données</h1>
+    <p class="lede">
+      12 tables PostgreSQL derrière l'application d'appel &amp; suivi d'absences <b>SEWIMAR</b>,
+      lues depuis les entités TypeORM du backend. Le fil <b style="color:var(--accent-ink)">bleu</b>
+      trace le cœur du produit — <b>un créneau donne lieu à un appel, qu'un élève délégué effectue et qui comporte une présence par élève</b> —
+      le reste (identité, structure pédagogique, suivi) l'entoure en support.
+    </p>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><span class="legend-tag">0,1</span> zéro ou une fois</div>
+    <div class="legend-item"><span class="legend-tag">1,1</span> exactement une fois</div>
+    <div class="legend-item"><span class="legend-tag">0,n</span> zéro à plusieurs fois</div>
+    <div class="legend-item"><span class="legend-tag">1,n</span> une à plusieurs fois</div>
+    <div class="legend-sep"></div>
+    <div class="legend-item">notation Merise — la cardinalité est lue côté de l'entité qui la porte</div>
+  </div>
+
+  <div class="diagram-shell">
+    <figure>
+      <div class="diagram-scroll">
+        <svg viewBox="0 0 1700 1700" role="img" aria-label="Schéma entité-association de SEWIMAR : USER relié à ELEVE et PARENT ; ELEVE rattaché à une CLASSE et responsable optionnel d'une classe ; CLASSE programme des CRENEAU pour une MATIERE ; un CRENEAU donne lieu à des APPEL effectués par un ELEVE ; un APPEL comporte des PRESENCE par élève, que USER peut justifier ; ELEVE et PARENT sont liés en plusieurs-à-plusieurs ; TRIMESTRE et ELEVE déclenchent des SIGNALEMENT ; PRESENCE génère des SMS_LOG reçus par PARENT.">
+
+          <!-- ===================== RELATIONS (drawn first, under boxes) ===================== -->
+
+          <!-- R1 ELEVE - USER -->
+          <line class="rel" x1="410" y1="290" x2="830" y2="210"/>
+          <text class="card" x="430" y="272">1,1</text>
+          <text class="card" x="792" y="222" text-anchor="end">0,1</text>
+          <g transform="translate(590,236)">
+            <rect class="relpill" x="-54" y="-14" width="108" height="22" rx="11"/>
+            <text class="relverb" x="0" y="2" text-anchor="middle">s'identifie via</text>
+          </g>
+
+          <!-- R2 PARENT - USER -->
+          <line class="rel" x1="1410" y1="290" x2="990" y2="210"/>
+          <text class="card" x="1390" y="272" text-anchor="end">1,1</text>
+          <text class="card" x="1028" y="222">0,1</text>
+          <g transform="translate(1215,236)">
+            <rect class="relpill" x="-54" y="-14" width="108" height="22" rx="11"/>
+            <text class="relverb" x="0" y="2" text-anchor="middle">s'identifie via</text>
+          </g>
+
+          <!-- R3 ELEVE - CLASSE (vertical) -->
+          <line class="rel" x1="410" y1="440" x2="410" y2="530"/>
+          <text class="card" x="420" y="456">1,1</text>
+          <text class="card" x="420" y="522">0,n</text>
+          <g transform="translate(410,485)">
+            <rect class="relpill" x="-46" y="-11" width="92" height="20" rx="10"/>
+            <text class="relverb" x="0" y="4" text-anchor="middle" font-size="11">appartient à</text>
+          </g>
+
+          <!-- R4 CLASSE - ELEVE (curve, responsable) -->
+          <path class="rel" d="M 280 570 Q 160 485 280 380"/>
+          <text class="card" x="255" y="568" text-anchor="end">0,2</text>
+          <text class="card" x="255" y="392" text-anchor="end">0,1</text>
+          <g transform="translate(178,489)">
+            <rect class="relpill" x="-64" y="-11" width="128" height="20" rx="10"/>
+            <text class="relverb" x="0" y="4" text-anchor="middle" font-size="11">a pour responsable</text>
+          </g>
+
+          <!-- R5 CLASSE - CRENEAU -->
+          <line class="rel" x1="540" y1="595" x2="780" y2="815"/>
+          <text class="card" x="552" y="612">1,n</text>
+          <text class="card" x="768" y="800" text-anchor="end">1,1</text>
+          <g transform="translate(660,705)">
+            <rect class="relpill" x="-46" y="-11" width="92" height="20" rx="10"/>
+            <text class="relverb" x="0" y="4" text-anchor="middle" font-size="11">programme</text>
+          </g>
+
+          <!-- R6 MATIERE - CRENEAU -->
+          <line class="rel" x1="1410" y1="620" x2="1040" y2="815"/>
+          <text class="card" x="1398" y="638" text-anchor="end">1,n</text>
+          <text class="card" x="1052" y="800">1,1</text>
+          <g transform="translate(1230,716)">
+            <rect class="relpill" x="-58" y="-11" width="116" height="20" rx="10"/>
+            <text class="relverb" x="0" y="4" text-anchor="middle" font-size="11">est enseignée en</text>
+          </g>
+
+          <!-- R7 CRENEAU - APPEL (core, vertical) -->
+          <line class="rel core" x1="910" y1="880" x2="910" y2="970"/>
+          <text class="card" x="920" y="896">0,n</text>
+          <text class="card" x="920" y="962">1,1</text>
+          <g transform="translate(910,925)">
+            <rect class="relpill core" x="-52" y="-11" width="104" height="20" rx="10"/>
+            <text class="relverb core" x="0" y="4" text-anchor="middle" font-size="11">donne lieu à</text>
+          </g>
+
+          <!-- R8 ELEVE - APPEL (core, elbow) -->
+          <path class="rel core" d="M 280 400 L 150 400 L 150 1075 L 780 1075"/>
+          <text class="card" x="266" y="393" text-anchor="end">0,n</text>
+          <text class="card" x="768" y="1060" text-anchor="end">1,1</text>
+          <g transform="translate(158,740) rotate(-90)">
+            <rect class="relpill core" x="-38" y="-11" width="76" height="20" rx="10"/>
+            <text class="relverb core" x="0" y="4" text-anchor="middle" font-size="11">effectue</text>
+          </g>
+
+          <!-- R9 APPEL - PRESENCE (core, vertical) -->
+          <line class="rel core" x1="910" y1="1180" x2="910" y2="1270"/>
+          <text class="card" x="920" y="1196">1,n</text>
+          <text class="card" x="920" y="1262">1,1</text>
+          <g transform="translate(910,1225)">
+            <rect class="relpill core" x="-42" y="-11" width="84" height="20" rx="10"/>
+            <text class="relverb core" x="0" y="4" text-anchor="middle" font-size="11">comporte</text>
+          </g>
+
+          <!-- R10 ELEVE - PRESENCE (elbow) -->
+          <path class="rel" d="M 280 430 L 110 430 L 110 1335 L 780 1335"/>
+          <text class="card" x="266" y="423" text-anchor="end">0,n</text>
+          <text class="card" x="768" y="1320" text-anchor="end">1,1</text>
+          <g transform="translate(118,995) rotate(-90)">
+            <rect class="relpill" x="-40" y="-11" width="80" height="20" rx="10"/>
+            <text class="relverb" x="0" y="4" text-anchor="middle" font-size="11">concerne</text>
+          </g>
+
+          <!-- R11 USER - PRESENCE (elbow, right margin) -->
+          <path class="rel" d="M 1040 125 L 1650 125 L 1650 1335 L 1040 1335"/>
+          <text class="card" x="1052" y="115">0,n</text>
+          <text class="card" x="1052" y="1355">0,1</text>
+          <g transform="translate(1650,730) rotate(-90)">
+            <rect class="relpill" x="-34" y="-11" width="68" height="20" rx="10"/>
+            <text class="relverb" x="0" y="4" text-anchor="middle" font-size="11">justifie</text>
+          </g>
+
+          <!-- R12 ELEVE - PARENT (horizontal) -->
+          <line class="rel" x1="540" y1="365" x2="1280" y2="365"/>
+          <text class="card" x="552" y="357">0,n</text>
+          <text class="card" x="1268" y="357" text-anchor="end">0,n</text>
+          <g transform="translate(910,352)">
+            <rect class="relpill" x="-56" y="-11" width="112" height="20" rx="10"/>
+            <text class="relverb" x="0" y="4" text-anchor="middle" font-size="11">est enfant de</text>
+          </g>
+
+          <!-- R13 TRIMESTRE - SIGNALEMENT (horizontal) -->
+          <line class="rel" x1="540" y1="1565" x2="780" y2="1565"/>
+          <text class="card" x="552" y="1557">0,n</text>
+          <text class="card" x="768" y="1557" text-anchor="end">1,1</text>
+          <g transform="translate(660,1552)">
+            <rect class="relpill" x="-34" y="-11" width="68" height="20" rx="10"/>
+            <text class="relverb" x="0" y="4" text-anchor="middle" font-size="11">couvre</text>
+          </g>
+
+          <!-- R14 ELEVE - SIGNALEMENT (elbow) -->
+          <path class="rel" d="M 280 340 L 190 340 L 190 1440 L 910 1440 L 910 1500"/>
+          <text class="card" x="266" y="333" text-anchor="end">0,n</text>
+          <text class="card" x="922" y="1490">1,1</text>
+          <g transform="translate(198,900) rotate(-90)">
+            <rect class="relpill" x="-42" y="-11" width="84" height="20" rx="10"/>
+            <text class="relverb" x="0" y="4" text-anchor="middle" font-size="11">déclenche</text>
+          </g>
+
+          <!-- R15 PRESENCE - SMS_LOG -->
+          <line class="rel" x1="1040" y1="1330" x2="1280" y2="1330"/>
+          <text class="card" x="1052" y="1322">0,n</text>
+          <text class="card" x="1268" y="1322" text-anchor="end">1,1</text>
+          <g transform="translate(1160,1345)">
+            <rect class="relpill" x="-32" y="-11" width="64" height="20" rx="10"/>
+            <text class="relverb" x="0" y="4" text-anchor="middle" font-size="11">génère</text>
+          </g>
+
+          <!-- R16 PARENT - SMS_LOG (elbow, right margin) -->
+          <path class="rel" d="M 1540 355 L 1600 355 L 1600 1365 L 1540 1365"/>
+          <text class="card" x="1528" y="347" text-anchor="end">0,n</text>
+          <text class="card" x="1528" y="1385" text-anchor="end">1,1</text>
+          <g transform="translate(1600,860) rotate(-90)">
+            <rect class="relpill" x="-30" y="-11" width="60" height="20" rx="10"/>
+            <text class="relverb" x="0" y="4" text-anchor="middle" font-size="11">reçoit</text>
+          </g>
+
+          <!-- ===================== ENTITIES ===================== -->
+
+          <!-- USER -->
+          <g>
+            <rect class="ebox" x="780" y="40" width="260" height="170" rx="12"/>
+            <text class="ehead" x="802" y="65">USER</text>
+            <line class="esep" x1="780" y1="76" x2="1040" y2="76"/>
+            <circle class="pkdot" cx="793" cy="88" r="3"/>
+            <text class="erow pk" x="802" y="92">id</text>
+            <text class="erow" x="802" y="112">email</text>
+            <text class="erow" x="802" y="132">motDePasseHash</text>
+            <text class="erow" x="802" y="152">role</text>
+            <text class="erow" x="802" y="172">actif</text>
+            <text class="erow" x="802" y="192">dateCreation</text>
+          </g>
+
+          <!-- ELEVE -->
+          <g>
+            <rect class="ebox" x="280" y="290" width="260" height="150" rx="12"/>
+            <text class="ehead" x="302" y="315">ELEVE</text>
+            <line class="esep" x1="280" y1="326" x2="540" y2="326"/>
+            <circle class="pkdot" cx="293" cy="338" r="3"/>
+            <text class="erow pk" x="302" y="342">id</text>
+            <text class="erow" x="302" y="362">nom</text>
+            <text class="erow" x="302" y="382">prenom</text>
+            <text class="erow" x="302" y="402">matricule</text>
+            <text class="erow" x="302" y="422">dateNaissance</text>
+          </g>
+
+          <!-- PARENT -->
+          <g>
+            <rect class="ebox" x="1280" y="290" width="260" height="130" rx="12"/>
+            <text class="ehead" x="1302" y="315">PARENT</text>
+            <line class="esep" x1="1280" y1="326" x2="1540" y2="326"/>
+            <circle class="pkdot" cx="1293" cy="338" r="3"/>
+            <text class="erow pk" x="1302" y="342">id</text>
+            <text class="erow" x="1302" y="362">nom</text>
+            <text class="erow" x="1302" y="382">prenom</text>
+            <text class="erow" x="1302" y="402">telephone</text>
+          </g>
+
+          <!-- CLASSE -->
+          <g>
+            <rect class="ebox" x="280" y="530" width="260" height="130" rx="12"/>
+            <text class="ehead" x="302" y="555">CLASSE</text>
+            <line class="esep" x1="280" y1="566" x2="540" y2="566"/>
+            <circle class="pkdot" cx="293" cy="578" r="3"/>
+            <text class="erow pk" x="302" y="582">id</text>
+            <text class="erow" x="302" y="602">nom</text>
+            <text class="erow" x="302" y="622">niveau</text>
+            <text class="erow" x="302" y="642">filiere</text>
+          </g>
+
+          <!-- MATIERE -->
+          <g>
+            <rect class="ebox" x="1280" y="530" width="260" height="90" rx="12"/>
+            <text class="ehead" x="1302" y="555">MATIERE</text>
+            <line class="esep" x1="1280" y1="566" x2="1540" y2="566"/>
+            <circle class="pkdot" cx="1293" cy="578" r="3"/>
+            <text class="erow pk" x="1302" y="582">id</text>
+            <text class="erow" x="1302" y="602">nom</text>
+          </g>
+
+          <!-- CRENEAU -->
+          <g>
+            <rect class="ebox" x="780" y="750" width="260" height="130" rx="12"/>
+            <text class="ehead" x="802" y="775">CRENEAU</text>
+            <line class="esep" x1="780" y1="786" x2="1040" y2="786"/>
+            <circle class="pkdot" cx="793" cy="798" r="3"/>
+            <text class="erow pk" x="802" y="802">id</text>
+            <text class="erow" x="802" y="822">jourSemaine</text>
+            <text class="erow" x="802" y="842">heureDebut</text>
+            <text class="erow" x="802" y="862">heureFin</text>
+          </g>
+
+          <!-- APPEL (accent) -->
+          <g>
+            <rect class="ebox accentbox" x="780" y="970" width="260" height="210" rx="12"/>
+            <text class="ehead accenthead" x="802" y="995">APPEL</text>
+            <line class="esep" x1="780" y1="1006" x2="1040" y2="1006"/>
+            <circle class="pkdot" cx="793" cy="1018" r="3"/>
+            <text class="erow pk" x="802" y="1022">id</text>
+            <text class="erow" x="802" y="1042">date</text>
+            <text class="erow" x="802" y="1062">statut</text>
+            <text class="erow" x="802" y="1082">positionLat</text>
+            <text class="erow" x="802" y="1102">positionLng</text>
+            <text class="erow" x="802" y="1122">positionPrecision</text>
+            <text class="erow" x="802" y="1142">dateValidation</text>
+            <text class="erow" x="802" y="1162">dateVerrou</text>
+          </g>
+
+          <!-- PRESENCE -->
+          <g>
+            <rect class="ebox" x="780" y="1270" width="260" height="130" rx="12"/>
+            <text class="ehead" x="802" y="1295">PRESENCE</text>
+            <line class="esep" x1="780" y1="1306" x2="1040" y2="1306"/>
+            <circle class="pkdot" cx="793" cy="1318" r="3"/>
+            <text class="erow pk" x="802" y="1322">id</text>
+            <text class="erow" x="802" y="1342">statut</text>
+            <text class="erow" x="802" y="1362">justification</text>
+            <text class="erow" x="802" y="1382">dateJustification</text>
+          </g>
+
+          <!-- SMS_LOG -->
+          <g>
+            <rect class="ebox" x="1280" y="1270" width="260" height="190" rx="12"/>
+            <text class="ehead" x="1302" y="1295">SMS_LOG</text>
+            <line class="esep" x1="1280" y1="1306" x2="1540" y2="1306"/>
+            <circle class="pkdot" cx="1293" cy="1318" r="3"/>
+            <text class="erow pk" x="1302" y="1322">id</text>
+            <text class="erow" x="1302" y="1342">telephone</text>
+            <text class="erow" x="1302" y="1362">message</text>
+            <text class="erow" x="1302" y="1382">statut</text>
+            <text class="erow" x="1302" y="1402">referenceProvider</text>
+            <text class="erow" x="1302" y="1422">erreur</text>
+            <text class="erow" x="1302" y="1442">dateEnvoi</text>
+          </g>
+
+          <!-- TRIMESTRE -->
+          <g>
+            <rect class="ebox" x="280" y="1500" width="260" height="130" rx="12"/>
+            <text class="ehead" x="302" y="1525">TRIMESTRE</text>
+            <line class="esep" x1="280" y1="1536" x2="540" y2="1536"/>
+            <circle class="pkdot" cx="293" cy="1548" r="3"/>
+            <text class="erow pk" x="302" y="1552">id</text>
+            <text class="erow" x="302" y="1572">nom</text>
+            <text class="erow" x="302" y="1592">dateDebut</text>
+            <text class="erow" x="302" y="1612">dateFin</text>
+          </g>
+
+          <!-- SIGNALEMENT -->
+          <g>
+            <rect class="ebox" x="780" y="1500" width="260" height="130" rx="12"/>
+            <text class="ehead" x="802" y="1525">SIGNALEMENT</text>
+            <line class="esep" x1="780" y1="1536" x2="1040" y2="1536"/>
+            <circle class="pkdot" cx="793" cy="1548" r="3"/>
+            <text class="erow pk" x="802" y="1552">id</text>
+            <text class="erow" x="802" y="1572">nbAbsencesNonJustifiees</text>
+            <text class="erow" x="802" y="1592">statut</text>
+            <text class="erow" x="802" y="1612">dateCreation</text>
+          </g>
+
+        </svg>
+      </div>
+      <figcaption>
+        Le fil bleu suit le cœur du produit : CRENEAU → APPEL → PRESENCE, avec ELEVE comme exécutant. Faites défiler horizontalement pour voir l'ensemble du schéma.
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="zones">
+    <div class="zone">
+      <h3><span class="dot"></span>Identité</h3>
+      <p>USER porte l'authentification ; ELEVE et PARENT y sont rattachés en 1-1 selon leur rôle.</p>
+    </div>
+    <div class="zone">
+      <h3><span class="dot"></span>Structure pédagogique</h3>
+      <p>CLASSE, MATIERE et CRENEAU définissent l'emploi du temps sur lequel s'appuient les appels.</p>
+    </div>
+    <div class="zone accent">
+      <h3><span class="dot"></span>Déroulement de l'appel</h3>
+      <p>APPEL et PRESENCE, le cœur métier : un délégué fait l'appel, chaque élève reçoit une présence.</p>
+    </div>
+    <div class="zone">
+      <h3><span class="dot"></span>Suivi &amp; notification</h3>
+      <p>TRIMESTRE borne les SIGNALEMENT d'absences répétées ; SMS_LOG trace les alertes envoyées aux parents.</p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h2>Notes de lecture</h2>
+    <ul>
+      <li>Notation Merise : les identifiants techniques sont soulignés (<code>id</code>), les clés étrangères ne sont pas listées comme attributs — elles sont portées par les associations elles-mêmes.</li>
+      <li>La table de jonction <code>eleve_parents</code> est purement technique (aucun attribut métier propre) : elle est représentée ici comme l'association plusieurs-à-plusieurs ELEVE ↔ PARENT plutôt que comme une entité.</li>
+      <li>CLASSE ↔ ELEVE porte deux associations distinctes : l'appartenance (chaque élève a une classe) et la désignation chef/sous-chef (au plus 2 responsables par classe, portée par l'attribut <code>poste</code> sur l'association).</li>
+      <li>Des champs purement techniques du modèle physique — le compteur de verrouillage optimiste <code>version</code> et le marqueur interne <code>derniereModificationAt</code> sur APPEL — sont omis du MCD car ils ne portent pas de sens métier.</li>
+    </ul>
+  </div>
+</div>
