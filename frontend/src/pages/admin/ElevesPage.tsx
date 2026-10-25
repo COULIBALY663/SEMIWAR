@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { classeApi, eleveApi } from '../../api/api';
 import type { Classe, Eleve, NiveauClasse } from '../../types';
+import { ImportElevesExcel } from '../../components/ImportElevesExcel';
 
 const NIVEAUX: NiveauClasse[] = ['BT1', 'BT2', 'BT3'];
 
@@ -155,7 +156,7 @@ export function ElevesPage() {
             />
           </div>
           <div className="form-row">
-            <label>Téléphone du parent (optionnel, format international)</label>
+            <label>Téléphone du parent (optionnel, ex : 07 07 12 34 56)</label>
             <input
               value={form.parentTelephone}
               onChange={(e) => setForm({ ...form, parentTelephone: e.target.value })}
@@ -167,6 +168,8 @@ export function ElevesPage() {
         </div>
       </form>
       {erreur && <p className="error-message">{erreur}</p>}
+
+      <ImportElevesExcel classes={classes} onImportTermine={charger} />
 
       <div className="card">
         <h3>Filtrer</h3>

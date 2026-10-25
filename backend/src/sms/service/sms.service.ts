@@ -15,6 +15,13 @@ export class SmsService {
     private readonly smsLogRepository: SmsLogRepository,
   ) {}
 
+  envoyerTest(telephone: string) {
+    return this.smsProvider.send(
+      telephone,
+      'SEWIMAR: SMS de test. Le service de notification fonctionne.',
+    );
+  }
+
   async notifierAbsence(
     presenceId: string,
     eleve: Eleve,

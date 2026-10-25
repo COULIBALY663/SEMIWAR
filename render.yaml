@@ -42,5 +42,7 @@ services:
         sync: false
       - key: TWILIO_FROM_NUMBER
         sync: false
+      - key: SMS_INDICATIF_PAYS
+        value: "225"
       - key: SEUIL_ABSENCES_SIGNALEMENT
         value: "4"

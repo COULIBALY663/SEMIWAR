@@ -67,6 +67,23 @@ export const classeApi = {
 
 export const eleveApi = {
   me: () => apiClient.get<Eleve>('/eleves/me').then((r) => r.data),
+  importer: (data: {
+    classeId: string;
+    eleves: {
+      matricule: string;
+      nom: string;
+      prenom: string;
+      dateNaissance: string;
+      parentNom?: string;
+      parentPrenom?: string;
+      parentTelephone?: string;
+    }[];
+  }) =>
+    apiClient
+      .post<
+        { matricule: string; statut: 'CREE' | 'IGNORE' | 'ERREUR'; message?: string }[]
+      >('/eleves/import', data)
+      .then((r) => r.data),
   findAll: (classeId?: string) =>
     apiClient
       .get<Eleve[]>('/eleves', { params: classeId ? { classeId } : {} })
@@ -193,4 +210,11 @@ export const signalementApi = {
 
 export const smsLogApi = {
   findAll: () => apiClient.get<SmsLog[]>('/sms-logs').then((r) => r.data),
+  envoyerTest: (telephone: string) =>
+    apiClient
+      .post<{ success: boolean; providerRef?: string; error?: string }>(
+        '/sms-logs/test',
+        { telephone },
+      )
+      .then((r) => r.data),
 };

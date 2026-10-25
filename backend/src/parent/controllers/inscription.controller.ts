@@ -1,6 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ParentService } from '../service/parent.service';
 import { InscrireEleveDto } from '../dto/inscrire-eleve.dto';
+import { ImporterElevesDto } from '../dto/importer-eleves.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -21,5 +22,10 @@ export class InscriptionController {
   @Post('inscription')
   inscrire(@Body() dto: InscrireEleveDto) {
     return this.parentService.inscrireEleve(dto);
+  }
+
+  @Post('import')
+  importer(@Body() dto: ImporterElevesDto) {
+    return this.parentService.importerEleves(dto);
   }
 }

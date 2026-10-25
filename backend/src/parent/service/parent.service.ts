@@ -8,6 +8,7 @@ import { randomBytes } from 'node:crypto';
 import { ParentRepository } from '../repository/parent.repository';
 import { CreateParentDto } from '../dto/create-parent.dto';
 import { InscrireEleveDto } from '../dto/inscrire-eleve.dto';
+import { ImporterElevesDto, ResultatImportLigne } from '../dto/importer-eleves.dto';
 import { AuthService } from '../../auth/service/auth.service';
 import { EleveService } from '../../eleve/service/eleve.service';
 import { Role } from '../../common/enums/role.enum';
@@ -99,5 +100,50 @@ export class ParentService {
     }
 
     return eleve;
+  }
+
+  /**
+   * Import en masse depuis un fichier Excel (lu côté navigateur). Chaque
+   * ligne est traitée indépendamment : un matricule déjà inscrit est ignoré
+   * et une erreur sur une ligne n'empêche pas l'import des suivantes.
+   */
+  async importerEleves(dto: ImporterElevesDto): Promise<ResultatImportLigne[]> {
+    const resultats: ResultatImportLigne[] = [];
+    for (const ligne of dto.eleves) {
+      const matricule = ligne.matricule.trim();
+      try {
+        if (await this.eleveService.matriculeExiste(matricule)) {
+          resultats.push({ matricule, statut: 'IGNORE', message: 'Matricule déjà inscrit' });
+          continue;
+        }
+        const parentRenseigne =
+          ligne.parentNom?.trim() && ligne.parentPrenom?.trim() && ligne.parentTelephone?.trim();
+        await this.inscrireEleve({
+          matricule,
+          nom: ligne.nom.trim(),
+          prenom: ligne.prenom.trim(),
+          dateNaissance: ligne.dateNaissance,
+          classeId: dto.classeId,
+          parent: parentRenseigne
+            ? {
+                nom: ligne.parentNom!.trim(),
+                prenom: ligne.parentPrenom!.trim(),
+                telephone: ligne.parentTelephone!.trim(),
+              }
+            : undefined,
+        });
+        resultats.push({ matricule, statut: 'CREE' });
+      } catch (error) {
+        const doublon = (error as { code?: string }).code === '23505';
+        resultats.push({
+          matricule,
+          statut: 'ERREUR',
+          message: doublon
+            ? 'Doublon : matricule ou téléphone déjà utilisé'
+            : (error as Error).message,
+        });
+      }
+    }
+    return resultats;
   }
 }

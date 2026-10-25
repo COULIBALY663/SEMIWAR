@@ -43,6 +43,10 @@ export class EleveService {
     return eleve;
   }
 
+  async matriculeExiste(matricule: string): Promise<boolean> {
+    return (await this.eleveRepository.findByMatricule(matricule)) !== null;
+  }
+
   async create(dto: CreateEleveDto): Promise<Eleve> {
     const emailTechnique = `eleve-${dto.matricule.toLowerCase().replace(/[^a-z0-9]+/g, '-')}@eleves.internal`;
     const motDePasseTechnique = randomBytes(24).toString('hex');

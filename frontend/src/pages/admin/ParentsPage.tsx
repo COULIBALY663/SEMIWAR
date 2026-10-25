@@ -60,7 +60,7 @@ export function ParentsPage() {
             />
           </div>
           <div className="form-row">
-            <label>Téléphone (format international, ex: +223...)</label>
+            <label>Téléphone (ex : 07 07 12 34 56)</label>
             <input
               value={form.telephone}
               onChange={(e) => setForm({ ...form, telephone: e.target.value })}
