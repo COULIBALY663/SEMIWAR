@@ -36,11 +36,21 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 8h
+      - key: SMS_PROVIDER
+        value: auto
+      - key: ORANGE_CLIENT_ID
+        sync: false
+      - key: ORANGE_CLIENT_SECRET
+        sync: false
+      - key: ORANGE_SENDER_NAME
+        sync: false
       - key: TWILIO_ACCOUNT_SID
         sync: false
       - key: TWILIO_AUTH_TOKEN
         sync: false
       - key: TWILIO_FROM_NUMBER
+        sync: false
+      - key: TWILIO_MESSAGING_SERVICE_SID
         sync: false
       - key: SMS_INDICATIF_PAYS
         value: "225"

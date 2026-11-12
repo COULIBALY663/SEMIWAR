@@ -21,6 +21,11 @@ export class SmsLogController {
     return this.smsLogRepository.findAll();
   }
 
+  @Get('configuration')
+  getConfiguration() {
+    return this.smsService.getConfiguration();
+  }
+
   @Post('test')
   envoyerTest(@Body() dto: EnvoyerSmsTestDto) {
     return this.smsService.envoyerTest(dto.telephone);

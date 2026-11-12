@@ -210,9 +210,19 @@ export const signalementApi = {
 
 export const smsLogApi = {
   findAll: () => apiClient.get<SmsLog[]>('/sms-logs').then((r) => r.data),
+  configuration: () =>
+    apiClient
+      .get<{ fournisseur: string; reel: boolean }>('/sms-logs/configuration')
+      .then((r) => r.data),
   envoyerTest: (telephone: string) =>
     apiClient
-      .post<{ success: boolean; providerRef?: string; error?: string }>(
+      .post<{
+        success: boolean;
+        providerRef?: string;
+        error?: string;
+        fournisseur?: string;
+        simulation?: boolean;
+      }>(
         '/sms-logs/test',
         { telephone },
       )

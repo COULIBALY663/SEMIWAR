@@ -15,6 +15,10 @@ export class SmsService {
     private readonly smsLogRepository: SmsLogRepository,
   ) {}
 
+  getConfiguration() {
+    return { fournisseur: this.smsProvider.nom, reel: this.smsProvider.reel };
+  }
+
   envoyerTest(telephone: string) {
     return this.smsProvider.send(
       telephone,

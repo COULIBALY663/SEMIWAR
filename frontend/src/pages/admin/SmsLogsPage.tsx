@@ -11,8 +11,13 @@ export function SmsLogsPage() {
     null,
   );
 
+  const [config, setConfig] = useState<{ fournisseur: string; reel: boolean } | null>(
+    null,
+  );
+
   useEffect(() => {
     smsLogApi.findAll().then(setLogs);
+    smsLogApi.configuration().then(setConfig).catch(() => setConfig(null));
   }, []);
 
   const envoyerTest = async (e: FormEvent) => {
@@ -22,8 +27,14 @@ export function SmsLogsPage() {
     try {
       const r = await smsLogApi.envoyerTest(telephoneTest);
       setResultatTest(
-        r.success
-          ? { ok: true, texte: `SMS envoyé (réf. ${r.providerRef})` }
+        r.success && r.simulation
+          ? {
+              ok: false,
+              texte:
+                'Mode simulation : aucun SMS réel n’a été envoyé. Configurez un fournisseur (Orange ou Twilio) sur le serveur.',
+            }
+          : r.success
+          ? { ok: true, texte: `SMS envoyé via ${r.fournisseur ?? 'le fournisseur'} (réf. ${r.providerRef})` }
           : { ok: false, texte: `Échec : ${r.error}` },
       );
     } catch {
@@ -36,6 +47,14 @@ export function SmsLogsPage() {
   return (
     <div>
       <h1>Journal des SMS</h1>
+
+      {config && (
+        <p className={config.reel ? 'hint-text' : 'error-message'}>
+          {config.reel
+            ? `Envoi réel activé — fournisseur : ${config.fournisseur}`
+            : 'Mode simulation : les SMS ne sont PAS envoyés aux parents. Configurez Orange ou Twilio sur le serveur.'}
+        </p>
+      )}
 
       <form className="card" onSubmit={envoyerTest}>
         <div className="form-inline">
