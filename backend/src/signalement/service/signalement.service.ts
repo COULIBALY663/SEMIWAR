@@ -36,6 +36,24 @@ export class SignalementService {
 
   @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async detecterAbsencesRepetees(): Promise<void> {
+    const classes = await this.classeService.findAll();
+    const eleveIds: string[] = [];
+    for (const classe of classes) {
+      const eleves = await this.eleveService.findByClasse(classe.id);
+      eleveIds.push(...eleves.map((e) => e.id));
+    }
+    await this.verifierEleves(eleveIds);
+  }
+
+  /**
+   * Vérifie le seuil d'absences non justifiées pour les élèves donnés et
+   * crée / met à jour leur signalement. Appelé par le cron nocturne et
+   * juste après la validation d'un appel.
+   */
+  async verifierEleves(eleveIds: string[]): Promise<void> {
+    if (eleveIds.length === 0) {
+      return;
+    }
     let trimestre;
     try {
       trimestre = await this.trimestreService.findEnCoursOrFail();
@@ -47,33 +65,32 @@ export class SignalementService {
     const seuil = Number(
       this.configService.get<string>('SEUIL_ABSENCES_SIGNALEMENT') ?? '4',
     );
-    const classes = await this.classeService.findAll();
 
-    for (const classe of classes) {
-      const eleves = await this.eleveService.findByClasse(classe.id);
-      for (const eleve of eleves) {
-        const stats = await this.statistiqueService.pourEleveInterne(
-          eleve.id,
-          trimestre.id,
-        );
-        if (stats.nbAbsencesNonJustifiees < seuil) {
-          continue;
-        }
-        const existant = await this.signalementRepository.findActif(
-          eleve.id,
-          trimestre.id,
-        );
-        if (existant) {
-          existant.nbAbsencesNonJustifiees = stats.nbAbsencesNonJustifiees;
-          await this.signalementRepository.save(existant);
-          continue;
-        }
-        await this.signalementRepository.create({
-          eleveId: eleve.id,
-          trimestreId: trimestre.id,
-          nbAbsencesNonJustifiees: stats.nbAbsencesNonJustifiees,
-        });
+    for (const eleveId of new Set(eleveIds)) {
+      const stats = await this.statistiqueService.pourEleveInterne(
+        eleveId,
+        trimestre.id,
+      );
+      if (stats.nbAbsencesNonJustifiees < seuil) {
+        continue;
       }
+      const existant = await this.signalementRepository.findActif(
+        eleveId,
+        trimestre.id,
+      );
+      if (existant) {
+        existant.nbAbsencesNonJustifiees = stats.nbAbsencesNonJustifiees;
+        await this.signalementRepository.save(existant);
+        continue;
+      }
+      await this.signalementRepository.create({
+        eleveId,
+        trimestreId: trimestre.id,
+        nbAbsencesNonJustifiees: stats.nbAbsencesNonJustifiees,
+      });
+      this.logger.log(
+        `Signalement créé pour l'élève ${eleveId} (${stats.nbAbsencesNonJustifiees} absences non justifiées)`,
+      );
     }
   }
 }

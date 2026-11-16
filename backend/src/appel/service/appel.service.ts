@@ -3,6 +3,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { OptimisticLockVersionMismatchError } from 'typeorm';
@@ -16,6 +17,7 @@ import { ClasseService } from '../../classe/service/classe.service';
 import { CreneauService } from '../../creneau/service/creneau.service';
 import { ParentRepository } from '../../parent/repository/parent.repository';
 import { SmsService } from '../../sms/service/sms.service';
+import { SignalementService } from '../../signalement/service/signalement.service';
 import { AccesClasseService } from '../../common/acces-classe/acces-classe.service';
 import { AppelStatut } from '../../common/enums/appel-statut.enum';
 import { PresenceStatut } from '../../common/enums/presence-statut.enum';
@@ -27,6 +29,8 @@ const DUREE_VERROU_MINUTES = 10;
 
 @Injectable()
 export class AppelService {
+  private readonly logger = new Logger(AppelService.name);
+
   constructor(
     private readonly appelRepository: AppelRepository,
     private readonly presenceRepository: PresenceRepository,
@@ -36,6 +40,7 @@ export class AppelService {
     private readonly parentRepository: ParentRepository,
     private readonly smsService: SmsService,
     private readonly accesClasseService: AccesClasseService,
+    private readonly signalementService: SignalementService,
   ) {}
 
   async findOneOrFail(id: string): Promise<Appel> {
@@ -219,6 +224,11 @@ export class AppelService {
       (p) => p.statut === PresenceStatut.ABSENT,
     );
     void this.notifierParents(absents, appel.date);
+    this.signalementService
+      .verifierEleves(absents.map((p) => p.eleveId))
+      .catch((err) =>
+        this.logger.error('Détection des signalements échouée', err),
+      );
 
     return this.findOneOrFail(appelId);
   }

@@ -10,6 +10,7 @@ import { ClasseModule } from '../classe/classe.module';
 import { CreneauModule } from '../creneau/creneau.module';
 import { ParentModule } from '../parent/parent.module';
 import { SmsModule } from '../sms/sms.module';
+import { SignalementModule } from '../signalement/signalement.module';
 import { AccesClasseModule } from '../common/acces-classe/acces-classe.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { AccesClasseModule } from '../common/acces-classe/acces-classe.module';
     CreneauModule,
     ParentModule,
     SmsModule,
+    SignalementModule,
     AccesClasseModule,
   ],
   controllers: [AppelController],

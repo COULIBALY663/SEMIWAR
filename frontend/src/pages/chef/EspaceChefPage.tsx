@@ -144,11 +144,24 @@ export function EspaceChefPage() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         try {
+          // Les cases cochées ne sont qu'un état local : on les enregistre
+          // d'abord, sinon l'appel serait validé avec tout le monde présent.
+          const absentsServeur = new Set(
+            appel.presences.filter((p) => p.statut === 'ABSENT').map((p) => p.eleveId),
+          );
+          const aEnregistrer =
+            absents.size !== absentsServeur.size ||
+            [...absents].some((id) => !absentsServeur.has(id));
+          let version = appel.version;
+          if (aEnregistrer) {
+            const maj = await appelApi.marquerAbsences(appel.id, Array.from(absents), version);
+            version = maj.version;
+          }
           const valide = await appelApi.valider(appel.id, {
             positionLat: position.coords.latitude,
             positionLng: position.coords.longitude,
             positionPrecision: position.coords.accuracy,
-            version: appel.version,
+            version,
           });
           if (derniereRequete.current === seq) {
             appliquerAppel(valide);
